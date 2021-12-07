@@ -1,7 +1,6 @@
 import random
 import threading
 import tkinter as tk
-
 from game.snakegame import SnakeGame
 from game.json_reader import JsonReader
 
@@ -19,7 +18,7 @@ def main():
     canvas = tk.Canvas(window, bg="#202020", width=config['width'], height=config['height'])
     canvas.grid(row=0, column=0, columnspan=1)
 
-    game = SnakeGame(window=window, canvas=canvas, config=config, show_progress=False)
+    game = SnakeGame(window=window, canvas=canvas, config=config, show_progress=True)
 
     game.register_callbacks(lambda x: on_refresh(x))
 
@@ -50,6 +49,7 @@ def on_refresh(game: SnakeGame):
     experience = game.refresh_snake()
 
     replay_memory.append(experience)
+
 
 if __name__ == '__main__':
     main()

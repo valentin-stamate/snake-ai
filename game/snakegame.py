@@ -1,5 +1,4 @@
 import random
-import threading
 import time
 import numpy as np
 from tkinter import Canvas, Tk
