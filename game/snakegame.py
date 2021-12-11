@@ -19,7 +19,7 @@ class SnakeGame:
     weight = 3
     refresh_rate = 30
     colors = {CellType.EMPTY: '#202020', CellType.SNAKE: '#ffffff', CellType.WALL: '#3862ab',
-              CellType.FOOD: '#f54545', CellType.BONUS: '#9e36d6'}
+              CellType.FOOD: '#f54545'}
 
     move = False
     game_won = False
@@ -85,7 +85,7 @@ class SnakeGame:
         # for block in self.walls:
         #     self.put_on_board(block, CellType.WALL)
 
-        self.snake = [[2, 6], [2, 5], [2, 4]]
+        self.snake = [[0, 2], [0, 1], [0, 0]]
         self.food = []
 
         self.put_on_board(self.snake[0], CellType.SNAKE)
@@ -133,7 +133,7 @@ class SnakeGame:
         :return: (state, action, reward, newState)
         """
         current_state = self.current_state()
-        reward = 0
+        reward = -0.1
 
         old_tail = self.snake[len(self.snake) - 1]
 
@@ -145,8 +145,8 @@ class SnakeGame:
         # Check outside
         if self.block_outside(new_block) or self.wall_collision(new_block):
             self.game_end = True
-            reward = -1
-            return current_state, action, reward, None
+            reward = -10
+            return Experience(current_state, action, reward, None)
 
         self.snake.remove(old_tail)
 
@@ -158,8 +158,8 @@ class SnakeGame:
         # Check collision
         if self.snake_collision():
             self.game_end = True
-            reward = -1
-            return current_state, action, reward, None
+            reward = -10
+            return Experience(current_state, action, reward, None)
 
         # Check for food
         head = self.snake[0]
@@ -171,7 +171,7 @@ class SnakeGame:
 
             self.spawn_food()
 
-            reward = 10
+            reward = 50
 
         # Here is the new state based on the action taken
         new_state = self.current_state()

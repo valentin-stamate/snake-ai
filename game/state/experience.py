@@ -7,3 +7,6 @@ class Experience:
 
     def __str__(self):
         return f'State={self.state}\nAction={self.action}\nReward={self.reward}\nNextState={self.next_state}\n'
+
+    def as_tuple(self):
+        return self.state, self.action, self.reward, self.next_state
