@@ -1,5 +1,4 @@
 from random import sample
-
 import numpy as np
 import pygame
 
@@ -47,13 +46,15 @@ class SnakeGame:
     actions = Direction.directions
 
     score = 0
+    steps = 0
 
-    def __init__(self, width, height, rows, columns, speed=20):
+    def __init__(self, width, height, rows, columns, speed=20, user_control=False):
         self.width = width
         self.height = height
         self.rows = rows
         self.columns = columns
         self.speed = speed
+        self.user_control = user_control
 
         self.block_w = int(width / columns)
         self.block_h = int(height / rows)
@@ -67,9 +68,14 @@ class SnakeGame:
 
     def reset(self):
         self.initialize_state()
+        self.steps = 0
 
         self.direction = Direction.RIGHT
-        self.snake = [[2, 3], [2, 2], [2, 1]]
+
+        i = int((self.rows - 1) / 2)
+        j = int((self.columns - 1) / 2)
+
+        self.snake = [[i, j], [i, j - 1], [i, j - 2]]
         self.move = False
         self.score = 0
 
@@ -114,7 +120,11 @@ class SnakeGame:
         Refresh snake, and returns the experience tuple
         :return: (state, action, reward, newState)
         """
+        if self.steps > 150:
+            return None
+
         state = np.array(self.state, copy=True)
+
         head = self.snake[0]
         food = self.food
 
@@ -138,7 +148,7 @@ class SnakeGame:
 
         # Check collision
         if self.snake_collision():
-            return Experience(state, action, -10, None)
+            return Experience(state, action, -100, None)
 
         # Check for food
 
@@ -149,11 +159,13 @@ class SnakeGame:
 
             self.spawn_food()
             self.score += 1
-            reward = 100
+            reward = 10
+            self.steps = 0
 
-        new_state = np.array(state, copy=True)
+        new_state = np.array(self.state, copy=True)
 
         self.move = False
+        self.steps += 1
         return Experience(state, action, reward, new_state)
 
     # Util
@@ -167,6 +179,10 @@ class SnakeGame:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+
+            if not self.user_control:
+                continue
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     self.left()
@@ -259,4 +275,88 @@ class SnakeGame:
         self.state = np.zeros((self.rows, self.columns), dtype='int32')
 
     def get_state(self):
-        return np.array(self.state, copy=True)
+        return self.danger() + self.direction_as_list() + self.food_position()
+        # return np.array(self.state, copy=True)
+
+    # State
+    def danger(self):
+        _dir = self.direction
+
+        head = self.snake[0]
+
+        if _dir == Direction.LEFT:
+            left = self.move_block(head, self.coords[Direction.DOWN])
+            up = self.move_block(head, self.coords[Direction.LEFT])
+            right = self.move_block(head, self.coords[Direction.UP])
+
+            return [
+                self.outside(left) or self.block_equal(left, CellType.SNAKE),
+                self.outside(up) or self.block_equal(up, CellType.SNAKE),
+                self.outside(right) or self.block_equal(right, CellType.SNAKE)
+            ]
+
+        if _dir == Direction.UP:
+            left = self.move_block(head, self.coords[Direction.LEFT])
+            up = self.move_block(head, self.coords[Direction.UP])
+            right = self.move_block(head, self.coords[Direction.RIGHT])
+
+            return [
+                self.outside(left) or self.block_equal(left, CellType.SNAKE),
+                self.outside(up) or self.block_equal(up, CellType.SNAKE),
+                self.outside(right) or self.block_equal(right, CellType.SNAKE) or self.outside(right)
+            ]
+
+        if _dir == Direction.RIGHT:
+            left = self.move_block(head, self.coords[Direction.UP])
+            up = self.move_block(head, self.coords[Direction.RIGHT])
+            right = self.move_block(head, self.coords[Direction.DOWN])
+
+            return [
+                self.outside(left) or self.block_equal(left, CellType.SNAKE),
+                self.outside(up) or self.block_equal(up, CellType.SNAKE),
+                self.outside(right) or self.block_equal(right, CellType.SNAKE)
+            ]
+
+        if _dir == Direction.DOWN:
+            left = self.move_block(head, self.coords[Direction.RIGHT])
+            up = self.move_block(head, self.coords[Direction.DOWN])
+            right = self.move_block(head, self.coords[Direction.LEFT])
+
+            return [
+                self.outside(left) or self.block_equal(left, CellType.SNAKE),
+                self.outside(up) or self.block_equal(up, CellType.SNAKE),
+                self.outside(right) or self.block_equal(right, CellType.SNAKE)
+            ]
+
+        return None
+
+    @staticmethod
+    def move_block(block, _dir):
+        return [block[0] + _dir[0], block[1] + _dir[1]]
+
+    def block_equal(self, block, _type):
+        return self.state[block[0], block[1]] == _type
+
+    def food_position(self):
+        head = self.snake[0]
+        food = self.food
+
+        position = [0, 0, 0, 0] # left, right, up, down
+
+        if head[0] < food[0]:
+            position[3] = 1
+        else:
+            position[2] = 1
+
+        if head[1] < food[1]:
+            position[1] = 1
+        else:
+            position[0] = 1
+
+        return position
+
+    def direction_as_list(self):
+        direction = [0, 0, 0, 0]
+        direction[self.direction] = 1
+        return direction
+

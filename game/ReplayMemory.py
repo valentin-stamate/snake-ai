@@ -23,4 +23,4 @@ class ReplayMemory:
         return self.length >= self.capacity
 
     def sample(self):
-        return random.sample(self.buffer, self.batch)
+        return zip(*random.sample(self.buffer, self.batch))
