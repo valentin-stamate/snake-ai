@@ -28,7 +28,7 @@ class CellType:
 class Colors:
     colors = {CellType.EMPTY: '#202020',
               CellType.SNAKE: '#ffffff',
-              CellType.HEAD: '#101010',
+              CellType.HEAD: '#181818',
               CellType.WALL: '#3862ab',
               CellType.FOOD: '#f54545'}
 
@@ -41,9 +41,12 @@ class SnakeGame:
     snake = []
 
     colors = Colors.colors
-    direction = 0
 
+    direction = Direction.RIGHT
     coords = Direction.coords
+    actions = Direction.directions
+
+    score = 0
 
     def __init__(self, width, height, rows, columns, speed=20):
         self.width = width
@@ -66,7 +69,9 @@ class SnakeGame:
         self.initialize_state()
 
         self.direction = Direction.RIGHT
-        self.snake = [[2, 3], [2, 2], [1, 2]]
+        self.snake = [[2, 3], [2, 2], [2, 1]]
+        self.move = False
+        self.score = 0
 
         for i in range(len(self.snake)):
             c = self.snake[i]
@@ -87,12 +92,22 @@ class SnakeGame:
         for i in range(self.rows):
             for j in range(self.columns):
                 color = self.colors[self.state[i, j]]
-                rectangle = pygame.Rect(i * self.block_h, j * self.block_w, self.block_w, self.block_h)
+                rectangle = pygame.Rect(j * self.block_w, i * self.block_h, self.block_w, self.block_h)
 
                 pygame.draw.rect(self.display, color, rectangle)
 
         pygame.display.flip()
         self.clock.tick(self.speed)
+
+    def set_action(self, action):
+        if action == Direction.LEFT:
+            self.left()
+        if action == Direction.RIGHT:
+            self.right()
+        if action == Direction.UP:
+            self.up()
+        if action == Direction.DOWN:
+            self.down()
 
     def refresh_snake(self):
         """
@@ -105,13 +120,14 @@ class SnakeGame:
 
         bottom = self.snake[len(self.snake) - 1]
 
-        _dir = self.coords[self.direction]
+        action = self.direction
+        _dir = self.coords[action]
 
-        new_head = [head[0] + _dir[1], head[1] + _dir[0]]
+        new_head = [head[0] + _dir[0], head[1] + _dir[1]]
 
         # Check outside
         if self.outside(new_head):
-            return Experience(state, 0, 0, None)
+            return Experience(state, action, -10, None)
 
         self.snake.remove(bottom)
         self.snake.insert(0, new_head)
@@ -122,20 +138,23 @@ class SnakeGame:
 
         # Check collision
         if self.snake_collision():
-            return Experience(state, 0, 0, None)
+            return Experience(state, action, -10, None)
 
         # Check for food
 
+        reward = 0
         if SnakeGame.equal(new_head, food):
             self.snake.append(bottom)
             self.put(bottom, CellType.SNAKE)
 
             self.spawn_food()
+            self.score += 1
+            reward = 100
 
         new_state = np.array(state, copy=True)
 
         self.move = False
-        return Experience(state, 0, 0, new_state)
+        return Experience(state, action, reward, new_state)
 
     # Util
     @staticmethod
@@ -238,3 +257,6 @@ class SnakeGame:
     # Initial State
     def initialize_state(self):
         self.state = np.zeros((self.rows, self.columns), dtype='int32')
+
+    def get_state(self):
+        return np.array(self.state, copy=True)
