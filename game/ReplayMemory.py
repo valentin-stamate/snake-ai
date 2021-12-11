@@ -1,6 +1,6 @@
 import random
 
-from game.state.experience import Experience
+from game import Experience
 
 
 class ReplayMemory:
