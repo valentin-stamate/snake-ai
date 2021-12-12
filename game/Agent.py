@@ -16,7 +16,7 @@ class Agent:
     gamma = 0.9
 
     def __init__(self):
-        self.model = Model()
+        self.model = Model('model')
         self.rows = 20
         self.columns = 20
         self.input_size = self.rows * self.columns
@@ -74,6 +74,7 @@ class Agent:
             # Save The Model
             old_score = max_score
             max_score = max(max_score, env.score)
+
             if old_score != max_score:
                 self.model.save()
 

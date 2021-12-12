@@ -120,7 +120,7 @@ class SnakeGame:
         Refresh snake, and returns the experience tuple
         :return: (state, action, reward, newState)
         """
-        if self.steps > 150:
+        if self.steps > 300:
             return None
 
         state = np.array(self.state, copy=True)

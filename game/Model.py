@@ -9,14 +9,16 @@ from game import ReplayMemory
 
 class Model:
 
-    def __init__(self):
+    def __init__(self, path=None):
         self.model = models.Sequential([
             layers.Dense(256, activation=activations.relu, input_shape=(11,)),
             layers.Dense(4, activation=activations.linear),
         ])
 
+        if path is not None:
+            self.model = keras.models.load_model(path)
+
         self.model.compile(optimizer='adam', loss=losses.MeanSquaredError(), metrics=['accuracy'])
-        pass
 
     def feed(self, states):
         _input = np.array(states, dtype='int32').reshape(len(states), 11)
