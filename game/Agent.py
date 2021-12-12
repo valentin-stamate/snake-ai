@@ -1,5 +1,4 @@
 import random
-
 from game.Experience import Experience
 from game.Model import Model
 from game.ReplayMemory import ReplayMemory
@@ -16,7 +15,7 @@ class Agent:
     gamma = 0.9
 
     def __init__(self):
-        self.model = Model('model')
+        self.model = Model()
         self.rows = 20
         self.columns = 20
         self.input_size = self.rows * self.columns
