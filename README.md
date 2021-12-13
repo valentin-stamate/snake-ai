@@ -31,3 +31,4 @@ Demo (Score: 59)
 * Replace Value in Specific Index in Each Row : https://stackoverflow.com/a/56710833/10805602
 * Target Q-Value DQN's : https://ai.stackexchange.com/a/20389
 * Deep Q-Learning For CartPole (Target Output) : https://towardsdatascience.com/deep-q-learning-tutorial-mindqn-2a4c855abffc
+* Why The Target Q-Values Are ... : https://ai.stackexchange.com/a/4745/47950
