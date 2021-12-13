@@ -10,7 +10,7 @@ Already Trained Model
 
 ![performance_02](https://user-images.githubusercontent.com/43499753/145710743-5c30a581-54c8-4986-8928-21ab84629bec.png)
 
-Demo
+Demo (Score: 59)
 
 <a href="https://user-images.githubusercontent.com/43499753/145710788-9d20c009-53be-40e3-802f-4af494d57ef3.mp4" title="Demo">
     <img src="https://user-images.githubusercontent.com/43499753/145710961-eb297c1d-921f-4c76-ba9c-c5908ae8ac64.jpg" alt="Demo"/>
@@ -29,3 +29,5 @@ Demo
 * Change Column Values : https://stackoverflow.com/a/28952975/10805602
 * Playlist : https://youtube.com/playlist?list=PLqnslRFeH2UrDh7vUmJ60YrmWd64mTTKV
 * Replace Value in Specific Index in Each Row : https://stackoverflow.com/a/56710833/10805602
+* Target Q-Value DQN's : https://ai.stackexchange.com/a/20389
+* Deep Q-Learning For CartPole (Target Output) : https://towardsdatascience.com/deep-q-learning-tutorial-mindqn-2a4c855abffc
