@@ -32,3 +32,7 @@ Demo (Score: 59)
 * Target Q-Value DQN's : https://ai.stackexchange.com/a/20389
 * Deep Q-Learning For CartPole (Target Output) : https://towardsdatascience.com/deep-q-learning-tutorial-mindqn-2a4c855abffc
 * Why The Target Q-Values Are ... : https://ai.stackexchange.com/a/4745/47950
+
+Additional Resources
+* https://en.wikipedia.org/wiki/Convex_function
+* https://towardsdatascience.com/why-going-from-implementing-q-learning-to-deep-q-learning-can-be-difficult-36e7ea1648af
